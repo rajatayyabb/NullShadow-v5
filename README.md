@@ -11,17 +11,16 @@
 
 ### AI-Powered Autonomous Security Platform
 
-[![Version](https://img.shields.io/badge/version-5.0-red.svg?style=for-the-badge)](https://github.com/rajatayyabb/NullShadow-v4)
+[![Version](https://img.shields.io/badge/version-5.0-red.svg?style=for-the-badge)](https://github.com/rajatayyabb)
 [![License](https://img.shields.io/badge/license-MIT-green.svg?style=for-the-badge)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg?style=for-the-badge)](https://www.python.org/)
 [![Platform](https://img.shields.io/badge/platform-Kali%20Linux%20%7C%20Ubuntu-black.svg?style=for-the-badge)](https://www.kali.org/)
-[![Stars](https://img.shields.io/github/stars/rajatayyabb/NullShadow-v4?style=for-the-badge&color=yellow)](https://github.com/rajatayyabb/NullShadow-v4/stargazers)
 
 **Free. Self-Hosted. No Data Leaves Your Network.**
 
 *Developed by **Tayyab** | BS Cybersecurity | CASE Institute of Technology*
 
-[📺 Demo Video](#demo) · [🚀 Quick Install](#installation) · [📋 Features](#features) · [🗺️ Roadmap](#roadmap)
+[🚀 Install](#-installation) · [📋 Features](#-features) · [🔌 MCP](#-mcp-tools) · [🧠 Odysseus](#-odysseus--natural-language-interface) · [🗺️ Roadmap](#️-roadmap)
 
 </div>
 
@@ -29,12 +28,13 @@
 
 ## What is NullShadow?
 
-NullShadow is a **free, self-hosted AI security platform** that gives organizations enterprise-grade vulnerability monitoring, threat intelligence correlation, and AI-guided remediation — without paying for CrowdStrike, Darktrace, or Tenable.
+NullShadow is a **free, self-hosted AI security platform** that gives you enterprise-grade vulnerability monitoring, threat-intelligence correlation, predictive analytics and AI-guided remediation — without paying for CrowdStrike, Darktrace or Tenable.
 
-It does two things most security tools don’t:
+It does things most security tools don’t:
 
-1. **Continuous defensive monitoring** — runs on a schedule, tracks how your security posture changes over time, alerts when risk increases, and explains exactly how to fix each finding
-1. **Compliance evidence generation** — automatically maps findings to ISO 27001, NIST CSF, and PCI DSS controls and generates audit-ready documentation
+1. **Continuous defensive monitoring** — runs on a schedule, tracks how your posture changes over time, alerts when risk increases, and explains exactly how to fix each finding.
+2. **Predictive intelligence** — predicts *when* a CVE will be weaponized for your specific tech stack, and compares your live profile against real breach fingerprints.
+3. **Compliance evidence generation** — maps findings to ISO 27001, NIST CSF 2.0 and PCI DSS v4.0 controls and generates audit-ready PDFs from real scan data.
 
 > “You have been exposed to this critical CVE for 47 days” is more actionable than a list of CVE IDs.
 
@@ -42,162 +42,236 @@ It does two things most security tools don’t:
 
 ## ✨ What’s New in v5.0
 
-|Feature                             |Description                                                                       |
-|------------------------------------|----------------------------------------------------------------------------------|
-|🛡️ **Defensive Monitoring Dashboard**|Live posture score, findings by severity, monitoring history with Δ Risk          |
-|🕰️ **Security Posture Time Machine** |Calculates exact days exposed per CVE using NVD publish dates + scan history      |
-|📊 **CVSS-Weighted Risk Scoring**    |0–100 posture score, Critical CVEs on CISA KEV list trigger CRITICAL alerts       |
-|🔍 **NVD CVE Enrichment**            |Every CVE automatically enriched with CVSS score, description, publish date       |
-|🔄 **Scan Diff Engine**              |New/resolved/changed findings between scans + risk delta calculation              |
-|🧠 **Guided Remediation**            |CWE/OWASP mapping + plain-language explanation + secure config snippet per finding|
-|🌐 **IANA RDAP WHOIS**               |Full WHOIS support for all TLDs including .edu.pk, .gov.pk, .com.pk               |
-|🔌 **MCP Server**                    |10 tools exposed via Model Context Protocol for AI agent integration              |
-|💬 **Local AI via Ollama**           |Full AI analysis with zero API cost — runs entirely on your hardware              |
+| Feature | Description |
+|---|---|
+| 🧠 **Odysseus Integration** | Natural-language front end — type “scan this domain” and the agent calls NullShadow’s MCP tools autonomously |
+| 🕰️ **Security Posture Time Machine** | Exact days exposed per CVE (NVD publish date + first-seen scan date) |
+| 📡 **Real-Time Threat Intel** | CISA KEV + AlienVault OTX + abuse.ch ThreatFox; KEV match forces CRITICAL |
+| 🔮 **Cognitive Attack Prediction** | Probability + days-until-weaponized per CVE, from NVD→CISA-KEV timing patterns |
+| 🧬 **Security DNA** | Compares your live fingerprint against pre-breach patterns (MOVEit, Log4Shell, ProxyLogon…) |
+| 👁️ **Sentinel Mode** | Autonomous CVE watcher — polls NVD hourly, matches your tech stack, pushes alerts via ntfy.sh |
+| 🟣 **AI Attack Narrative** | Purple-team attack-path write-up with one Priority Action (no exploit code) |
+| 🤖 **AI System Pentesting** | OWASP LLM Top 10 — prompt-injection / endpoint-discovery / prompt-leak (detection only) |
+| 🌐 **Scan Engine** | Nikto + WhatWeb + Dirb + 5-step hash crack + SQLi detection, all feeding the findings pipeline |
+| 📜 **Compliance Evidence Generator** | Auto ISO 27001 / NIST CSF / PCI DSS / OWASP audit PDFs |
+| 🔁 **Self-Healing Remediation** | Verifies whether advice worked; gives a *different* follow-up when a fix didn’t take |
+| 📈 **Security-Debt Forecasting** | Linear-regression posture projection (refuses to guess with <10 runs) |
 
 -----
 
 ## 🎯 Features
 
-### Offensive — 37 Tools
+**45 active tools** across pentesting, OSINT, AI/utilities, defensive monitoring and predictive intel.
 
 <details>
-<summary><b>Pentesting (11 tools)</b></summary>
+<summary><b>Pentesting & Scan Engine</b></summary>
 
-|# |Tool                 |What It Does                                          |
-|--|---------------------|------------------------------------------------------|
-|01|Port Scanner         |TCP/UDP port scan with service fingerprinting via nmap|
-|02|Vulnerability Scanner|CVE detection via nmap NSE scripts                    |
-|03|Host Discovery       |ARP/ICMP network sweep                                |
-|04|IP Pinger            |ICMP latency and reachability                         |
-|05|Dir Bruteforcer      |Multi-threaded web directory enumeration              |
-|06|SSL/TLS Auditor      |Cipher suite, cert chain, expiry, TLS version check   |
-|07|Hash ID & Cracker    |Hash type identification + wordlist cracking          |
-|08|JWT Analyzer         |JWT decode, algorithm weakness detection              |
-|09|Subdomain Enumerator |DNS brute-force + passive enumeration                 |
-|10|DNS Recon            |A/AAAA/MX/TXT/NS/SOA record retrieval                 |
-|11|HTTP Header Analyzer |Security header audit, misconfiguration detection     |
+| # | Tool | What it does |
+|---|---|---|
+| 01 | Port Scanner | TCP/UDP scan with service fingerprinting (nmap) |
+| 02 | Vulnerability Scanner | CVE detection via nmap NSE scripts |
+| 03 | Host Discovery | ARP/ICMP sweep |
+| 04 | IP Pinger | ICMP latency / reachability |
+| 05 | Dir Bruteforcer | Web directory enumeration (Dirb + extensions) |
+| 06 | SSL/TLS Auditor | Cipher, cert chain, expiry, TLS version |
+| 07 | Hash ID & Cracker | Hash type ID + wordlist cracking |
+| 08 | JWT Analyzer | JWT decode + weakness detection |
+| 09 | Subdomain Enumerator | DNS brute-force + passive |
+| 10 | DNS Recon | A/AAAA/MX/TXT/NS/SOA |
+| 11 | HTTP Header Analyzer | Security-header audit |
+| 37 | **Full Web Scan** | Nikto + WhatWeb + Dirb combined |
+| 38 | **Nikto** | Web-server misconfigs / dangerous files |
+| 39 | **WhatWeb** | CMS/framework tech fingerprint |
+| 40 | **Hash Crack (5-step chain)** | Hashcat GPU→CPU→mask→John→built-in (never errors) |
+| 41 | **SQLi Detection** | Error + time-based parameter detection (detection only) |
 
 </details>
 
 <details>
-<summary><b>OSINT (6 tools)</b></summary>
+<summary><b>OSINT & Utilities</b></summary>
 
-|# |Tool            |What It Does                                         |
-|--|----------------|-----------------------------------------------------|
-|12|Domain WHOIS    |IANA RDAP bootstrap — supports all TLDs              |
-|13|Username Tracker|30+ platform cross-check (GitHub, Reddit, Instagram…)|
-|14|IP Geolocation  |Country, city, ISP, ASN                              |
-|15|Phone Lookup    |Carrier, number type, E.164 format                   |
-|16|Email Harvester |Domain-based email discovery from public sources     |
-|17|CVE Search      |Keyword-based CVE lookup via NVD API                 |
+| # | Tool |
+|---|---|
+| 12 | Domain WHOIS (IANA RDAP, all TLDs incl. .edu.pk/.gov.pk) |
+| 13 | Username Tracker (30+ platforms) |
+| 14 | IP Geolocation · 15 Phone Lookup · 16 Email Harvester · 17 CVE Search |
+| 18 | URL Phishing Analyzer · 19 Website Cloner · 20 Cookie Auditor |
+| 21 | Network Info · 22 Password Generator |
+
+*IoT/firmware modules (old [23][24]) are retained in the codebase but hidden from the menu — NullShadow’s focus is network/web pentesting and defensive monitoring.*
 
 </details>
 
 <details>
-<summary><b>AI & Utilities (8 tools)</b></summary>
+<summary><b>Defensive Monitoring & Predictive Intel</b></summary>
 
-|# |Tool                 |What It Does                                       |
-|--|---------------------|---------------------------------------------------|
-|18|URL Phishing Analyzer|AI-scored phishing risk analysis                   |
-|19|Website Cloner       |Offline mirror for analysis                        |
-|20|Cookie Auditor       |Secure/HttpOnly/SameSite flag checker              |
-|21|Network Info         |Interface, IP, gateway, DNS                        |
-|22|Password Generator   |Cryptographically random password generation       |
-|23|DL Firmware Analysis |Binary scanning for hardcoded credentials/backdoors|
-|24|Neural Fuzz IoT      |Malformed packet fuzzing for MQTT/CoAP             |
-|25|AI Chat Mode         |Interactive security Q&A                           |
+| # | Tool | What it does |
+|---|---|---|
+| 26 | Auto Full Recon | 7-phase autonomous recon |
+| 34 | Scan Diff | New/resolved/changed findings + risk delta |
+| 35 | Guided Remediation | CWE/OWASP mapping + fix + secure snippet |
+| 36 | Findings + CVE Enrich | Live NVD enrichment (CVSS, description, dates) |
+| 42 | **Time Machine** | Days exposed per CVE |
+| 43 | **Threat Intel** | CISA KEV + OTX + ThreatFox |
+| 44 | **AI System Pentest** | OWASP LLM Top 10 |
+| 45 | **Attack Narrative** | Purple-team attack path |
+| 46 | **Attack Prediction** | When a CVE will be weaponized |
+| 47 | **Security DNA** | Breach-pattern matching |
+| 48 | **Sentinel Mode** | Autonomous CVE watcher + ntfy push |
+| 49 | **Compliance Report** | ISO27001 / NIST / PCI / OWASP PDF |
+| 50 | **Posture Forecast** | Security-debt projection |
+| 51 | **Remediation Verify** | Self-healing effectiveness loop |
 
 </details>
-
-### Defensive — Continuous Monitoring
-
-|Feature                      |How It Works                                                                            |
-|-----------------------------|----------------------------------------------------------------------------------------|
-|**Auto Full Recon** `[26]`   |7-phase autonomous recon: WHOIS → Subdomain → Port → Vuln → Geo → ThreatIntel → SSL     |
-|**Scan Diff** `[34]`         |Compare any two scans — new findings, resolved findings, changed severity               |
-|**Guided Remediation** `[35]`|Per-finding: CWE/OWASP mapping + explanation + remediation steps + secure config snippet|
-|**CVE Enrichment** `[36]`    |Enrich all findings with live NVD data — CVSS scores, descriptions, publish dates       |
-|**Monitoring Mode**          |Run on a schedule via cron — continuous posture tracking                                |
-|**Dashboard**                |Flask web dashboard at localhost:5000 — posture score timeline, severity charts         |
 
 ### AI Modes
 
-|Mode            |Backend                                  |Cost       |
-|----------------|-----------------------------------------|-----------|
-|Local (default) |Ollama — llama3.2:3b / qwen2.5:7b        |**Free**   |
-|Cloud (optional)|Claude / GPT-4 / Gemini                  |Pay-per-use|
-|MCP Agent       |Any MCP client (Claude Desktop, Odysseus)|Free       |
+| Mode | Backend | Cost |
+|---|---|---|
+| Local (default) | Ollama — llama3.2:3b / qwen2.5:7b | **Free** |
+| Cloud (optional) | Claude / GPT-4 / Gemini | Pay-per-use |
+| MCP Agent | Any MCP client (Claude Desktop, Odysseus) | Free |
 
 -----
 
 ## 🚀 Installation
 
-### Prerequisites
+Tested on **Kali Linux 2025.x** (also works on Ubuntu 22.04+).
+
+### 1 · System dependencies + scanning tools
 
 ```bash
-# Install nmap (required)
-sudo apt install nmap -y
+sudo apt update
+sudo apt install -y git python3 python3-venv python3-pip python3-dev \
+     build-essential libcurl4-openssl-dev libssl-dev libxml2-dev libxslt1-dev \
+     nmap nikto whatweb dirb hashcat john
+```
+*(On Kali full, most scanning tools are pre-installed — this just makes sure.)*
 
-# Install Ollama for free local AI (recommended)
+### 2 · Clone + Python environment
+
+```bash
+git clone https://github.com/rajatayyabb/NullShadow-v5.git NullShadow-v5
+cd NullShadow-v5
+
+python3 -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+### 3 · Config (no API key required — local AI is the default)
+
+```bash
+[ -f config/config.py ] || cp config/config.example.py config/config.py
+```
+All core features work with **zero** API keys. `DEFAULT_AI=local`, and the SQLite DB is created automatically on first run.
+
+### 4 · (Recommended) Local AI — free & offline
+
+```bash
 curl -fsSL https://ollama.com/install.sh | sh
 ollama pull llama3.2:3b
 ```
+Skip this and NullShadow still runs (rule-based fallback for AI features).
 
-### Quick Setup
+### 5 · Run
 
 ```bash
-git clone https://github.com/rajatayyabb/NullShadow-v4.git
-cd NullShadow-v4
+source venv/bin/activate        # every new terminal
 
-# Create virtual environment (required on Kali 2025.x)
-python3 -m venv venv
-source venv/bin/activate
-
-pip install -r requirements.txt
-sudo chmod +x setup.sh && sudo ./setup.sh
-
-python3 main.py
+python3 main.py                 # CLI — 45-tool menu
+python3 dashboard.py            # dashboard → http://127.0.0.1:8077
+python3 mcp_server.py           # MCP server (stdio) for AI agents
 ```
 
-### Optional: Start Dashboard
+### 6 · Sanity test (no external tools or network needed)
 
 ```bash
-# In a separate terminal (with venv activated)
-python3 dashboard.py
-# Open http://localhost:5000
+python3 modules/intel/time_machine.py
+python3 modules/intel/security_dna.py
+python3 modules/compliance/evidence_generator.py
+python3 modules/pentesting/scan_engine.py
 ```
 
-### Optional: Connect Claude Desktop via MCP
+Then run a real scan against something you own or are authorized to test
+(e.g. `scanme.nmap.org`, or your own Metasploitable2 VM):
 
 ```bash
-# Start MCP server
-python3 mcp_server.py
+python3 main.py        # → [37] Full Web Scan   or   [26] Auto Full Recon
+```
 
-# Add to Claude Desktop config (~/.config/Claude/claude_desktop_config.json):
+### Optional · Connect Claude Desktop via MCP
+
+```jsonc
+// ~/.config/Claude/claude_desktop_config.json
 {
   "mcpServers": {
     "nullshadow": {
       "command": "python3",
-      "args": ["/path/to/NullShadow-v4/mcp_server.py"]
+      "args": ["/absolute/path/to/NullShadow-v5/mcp_server.py"]
     }
   }
 }
 ```
 
-### Optional: API Keys (not required)
-
-All core features work without any API keys. To enable cloud AI analysis:
+### Optional · Cloud AI keys (not required)
 
 ```bash
-cp config/config.example.py config/config.py
 nano config/config.py
 ```
 
-|Provider          |Key                |Link                           |
-|------------------|-------------------|-------------------------------|
-|Anthropic (Claude)|`ANTHROPIC_API_KEY`|<https://console.anthropic.com>|
-|OpenAI (GPT-4)    |`OPENAI_API_KEY`   |<https://platform.openai.com>  |
-|Google (Gemini)   |`GEMINI_API_KEY`   |<https://aistudio.google.com>  |
+| Provider | Key | Link |
+|---|---|---|
+| Anthropic (Claude) | `ANTHROPIC_API_KEY` | https://console.anthropic.com |
+| OpenAI (GPT-4) | `OPENAI_API_KEY` | https://platform.openai.com |
+| Google (Gemini) | `GEMINI_API_KEY` | https://aistudio.google.com |
+
+-----
+
+## 🧠 Odysseus — Natural-Language Interface
+
+Drive NullShadow in plain English through [Odysseus](https://github.com/pewdiepie-archdaemon/odysseus), a self-hosted AI workspace that acts as an MCP client. With a local model this is **100% free**.
+
+```bash
+# NullShadow core + dashboard + ollama
+docker compose -f docker-compose.v5.yml up -d
+
+# Odysseus UI (host port 7011; the container itself listens on 7000)
+git clone https://github.com/pewdiepie-archdaemon/odysseus.git nullshadow_ui
+cd nullshadow_ui && cp .env.example .env && docker compose up -d --build && cd ..
+
+# Open http://localhost:7011 → create the admin account → then register NullShadow:
+python3 docker/register_nullshadow_mcp.py \
+    --odysseus-url http://localhost:7011 --username admin --password '<your-pw>'
+```
+
+Registration posts form-encoded to the real `POST /api/mcp/servers` endpoint.
+Other auth modes: `--internal-token "$ODYSSEUS_INTERNAL_TOKEN"` or, if Odysseus runs
+with `AUTH_ENABLED=false`, `--no-auth`. See `docker/register_nullshadow_mcp.py`.
+
+> **License note:** Odysseus is **AGPL-3.0**. Self-hosting for your FYP/demo is fine;
+> if you rebrand/modify it and serve it on a *public* server, AGPL requires you to
+> offer that modified source to its users. (NullShadow itself is your own project.)
+
+-----
+
+## 🔌 MCP Tools
+
+NullShadow exposes **15 tools** via Model Context Protocol (Claude Desktop, Odysseus, Cursor, Roo Code):
+
+```
+# core
+port_scan(target)             vulnerability_scan(target)   subdomain_enum(target)
+dns_recon(target)             whois_lookup(domain)         hash_crack(hash)
+jwt_analyze(token)
+
+# v5.0 predictive & defensive intel
+threat_intel_check(target)          exposure_analysis(target)
+predict_exploitation(target)        dna_analysis(target)
+generate_attack_narrative(target)   compliance_report(target, framework)
+forecast_posture(target)            sentinel_status()
+```
 
 -----
 
@@ -205,95 +279,70 @@ nano config/config.py
 
 ```
 NullShadow v5.0
-├── main.py                          ← CLI entry point (37 tools)
-├── mcp_server.py                    ← MCP server (10 tools for AI agents)
-├── dashboard.py                     ← Flask web dashboard
+├── main.py                              ← CLI entry point (45 tools)
+├── mcp_server.py                        ← MCP server (15 tools)
+├── dashboard.py                         ← Flask dashboard (port 8077) + v5 routes
+├── docker-compose.v5.yml / Dockerfile   ← core + dashboard + ollama
+├── docker/register_nullshadow_mcp.py    ← Odysseus MCP registration
 ├── modules/
-│   ├── ai/
-│   │   ├── ai_engine.py             ← Cloud AI (Claude/GPT-4/Gemini)
-│   │   ├── local_ai_engine.py       ← Local AI (Ollama + fallback)
-│   │   ├── deep_learning_engine.py  ← DL vulnerability scoring
-│   │   ├── orchestrator.py          ← RL autonomous orchestrator
-│   │   └── rl_engine.py             ← Q-learning attack path optimization
+│   ├── ai/            ← cloud + local (Ollama) AI engines, RL/DL orchestrator
 │   ├── pentesting/
-│   │   ├── scanner.py               ← Core pentest tools
-│   │   ├── new_tools.py             ← Additional tools
-│   │   └── iot_sec.py               ← IoT/firmware security
-│   ├── osint/osint_tools.py         ← OSINT modules
-│   ├── recon/recon_pipeline.py      ← 7-phase autonomous recon
-│   ├── reporting/report_generator.py← PDF report generation
-│   ├── utilities/util_tools.py      ← Misc utilities
+│   │   ├── scanner.py            ← core pentest tools
+│   │   ├── scan_engine.py        ← Nikto/WhatWeb/Dirb/HashCrack/SQLi (v5)
+│   │   └── ai_pentest.py         ← OWASP LLM Top 10 (v5)
+│   ├── osint/ · recon/ · reporting/
+│   ├── compliance/               ← mapper + evidence PDF generator (v5)
 │   └── intel/
-│       ├── nvd_lookup.py            ← NVD CVE enrichment
-│       ├── scan_diff.py             ← Scan comparison engine
-│       ├── risk_score.py            ← CVSS-weighted posture scoring
-│       ├── remediation.py           ← AI-guided remediation generation
-│       └── threat_feeds.py          ← CISA KEV / OTX / ThreatFox (v5)
-└── null_db/db.py                    ← SQLite (scans + findings + CVE cache)
+│       ├── nvd_lookup.py · scan_diff.py · risk_score.py · remediation.py · exploit_refs.py
+│       ├── time_machine.py       ← days-exposed per CVE (v5)
+│       ├── threat_feeds.py       ← CISA KEV / OTX / ThreatFox (v5)
+│       ├── attack_prediction.py  ← weaponization prediction (v5)
+│       ├── security_dna.py       ← breach-pattern matching (v5)
+│       ├── attack_narrative.py   ← purple-team narrative (v5)
+│       ├── sentinel.py           ← autonomous CVE watcher (v5)
+│       └── remediation_tracker.py← self-healing loop (v5)
+└── null_db/db.py                 ← SQLite (scans + findings + CVE/threat cache)
 ```
-
------
-
-## 🔌 MCP Tools
-
-NullShadow exposes 10 tools via Model Context Protocol. Connect any MCP-compatible AI client (Claude Desktop, Odysseus, Cursor, Roo Code):
-
-```
-port_scan(target)           → Port scan with service fingerprinting
-vulnerability_scan(target)  → CVE detection via nmap NSE scripts  
-subdomain_enum(target)      → DNS brute-force subdomain discovery
-dns_recon(target)           → Full DNS record retrieval
-whois_lookup(domain)        → RDAP-based registrant data
-hash_crack(hash)            → Hash identification + wordlist cracking
-jwt_analyze(token)          → JWT decode + weakness detection
-threat_intel_check(target)  → CISA KEV + OTX + ThreatFox lookup
-exposure_analysis(target)   → Days-exposed per CVE (Time Machine)
-ai_pentest(target_url)      → AI system vulnerability testing (v5.0)
-```
-
------
-
-## 🗺️ Roadmap
-
-### v5.0 — Current (Production Ready) ✅
-
-- 37-tool CLI, structured findings DB, NVD CVE enrichment
-- CVSS-weighted risk scoring, scan diff engine
-- Guided remediation with CWE/OWASP mapping
-- Web dashboard with posture score timeline
-- MCP server with 10 exposed tools
-- Local AI via Ollama (zero cost)
-
-### v6.0 — In Development 🔧
-
-- **Odysseus Integration** — Natural language interface. Type “scan this domain” → AI agent calls tools autonomously
-- **Security Posture Time Machine** — Days exposed per CVE visualization
-- **Real-Time Threat Intel** — CISA KEV + AlienVault OTX + abuse.ch ThreatFox
-- **AI System Pentesting** — Prompt injection scanner, LLM endpoint discovery (OWASP LLM Top 10)
-- **Compliance Evidence Generator** — Auto-generate ISO 27001 / NIST CSF / PCI DSS audit documents
-- **One-Command Docker Deploy** — `docker-compose up` starts everything
 
 -----
 
 ## 📊 Why NullShadow?
 
-|Capability                 |NullShadow|Nessus        |CrowdStrike        |Manual Pentest  |
-|---------------------------|:--------:|:------------:|:-----------------:|:--------------:|
-|Vulnerability Scanning     |✅         |✅             |✅                  |✅               |
-|Continuous Monitoring      |✅         |✅             |✅                  |❌               |
-|AI-Guided Remediation      |✅         |❌             |❌                  |❌               |
-|Scan Diff (Change Tracking)|✅         |❌             |✅                  |❌               |
-|Local AI (No Cloud Cost)   |✅         |❌             |❌                  |❌               |
-|MCP Agent Integration      |✅         |❌             |❌                  |❌               |
-|ISO 27001 Evidence Report  |✅         |❌             |❌                  |✅               |
-|AI System Pentesting       |✅ (v5)    |❌             |❌                  |❌               |
-|**Cost**                   |**Free**  |**$3,990+/yr**|**$15/endpoint/mo**|**$500+/report**|
+| Capability | NullShadow | Nessus | CrowdStrike | Manual Pentest |
+|---|:--:|:--:|:--:|:--:|
+| Vulnerability Scanning | ✅ | ✅ | ✅ | ✅ |
+| Continuous Monitoring | ✅ | ✅ | ✅ | ❌ |
+| AI-Guided Remediation | ✅ | ❌ | ❌ | ❌ |
+| **CVE Weaponization Prediction** | ✅ | ❌ | ❌ | ❌ |
+| **Breach-Pattern Matching (Security DNA)** | ✅ | ❌ | ❌ | ❌ |
+| Autonomous CVE Watcher | ✅ | ❌ | ✅ | ❌ |
+| Local AI (no cloud cost) | ✅ | ❌ | ❌ | ❌ |
+| MCP Agent Integration | ✅ | ❌ | ❌ | ❌ |
+| ISO27001 / NIST / PCI Evidence | ✅ | ❌ | ❌ | ✅ |
+| AI System Pentesting (OWASP LLM) | ✅ | ❌ | ❌ | ❌ |
+| **Cost** | **Free** | $3,990+/yr | $15/endpoint/mo | $500+/report |
+
+-----
+
+## 🗺️ Roadmap
+
+### v5.0 — Current ✅
+45-tool CLI · predictive intel (prediction, DNA, time machine) · threat feeds ·
+AI system pentesting · compliance evidence · Sentinel mode · Odysseus NL interface ·
+upgraded dashboard · 15 MCP tools.
+
+### v6.0 — Ideas 🔧
+Scheduled multi-target monitoring UI · blast-radius asset graph · more breach
+fingerprints · Slack/Discord alerting · report templating.
 
 -----
 
 ## ⚠️ Disclaimer
 
-NullShadow is intended for **educational purposes and authorized security testing only**. Always obtain explicit written permission before scanning any system or network you do not own. The developer is not responsible for any misuse or damage caused by this tool.
+NullShadow is for **educational purposes and authorized security testing only**.
+Always obtain explicit written permission before scanning any system or network you
+do not own. The AI System Pentesting module must only be used on AI systems you are
+explicitly authorized to test. The developer is not responsible for misuse.
 
 **Use responsibly. Test ethically.**
 
