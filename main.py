@@ -71,7 +71,7 @@ def display_banner():
     is_cloud = getattr(ai, "is_cloud", lambda: False)()
     ai_label = (ai.active_ai or "local").upper() if is_cloud else "LOCAL"
     ai_status = f"[green]●[/green] {ai_label}"
-    console.print(f"  AI Engine: {ai_status}   {server_status}     DB: [green]●[/green] Connected     Version: [cyan]v4.0 (DL/RL + Defensive Monitoring)[/cyan]  Tools: [yellow]26[/yellow]\n", justify="center")
+    console.print(f"  AI Engine: {ai_status}   {server_status}     DB: [green]●[/green] Connected     Version: [cyan]v5.0 (DL/RL + Defensive Monitoring + Predictive Intel)[/cyan]  Tools: [yellow]45[/yellow]\n", justify="center")
 
 
 def display_menu():
@@ -110,8 +110,6 @@ def display_menu():
     t3.add_row("[20] Cookie Auditor")
     t3.add_row("[21] Network Info")
     t3.add_row("[22] Password Generator")
-    t3.add_row("[23] 🧠 DL Firmware Analysis")
-    t3.add_row("[24] 💡 Neural Fuzz IoT")
     t3.add_row("[31] 🔄 RL Simulation")
     t3.add_row("[32] 🎭 Deception Demo")
     t3.add_row("[33] 🔄 Self-Correcting Loop")
@@ -126,8 +124,28 @@ def display_menu():
     t3.add_row("[35] 🛡  Guided Remediation")
     t3.add_row("[36] 🧬 Findings + CVE Enrich")
 
-    console.print(Panel(Columns([t1, t2, t3]),
-                        title="[bold white]━━━  N U L L S H A D O W   v4.0  ━━━  [ 26 TOOLS ]  ━━━[/bold white]",
+    # ── v5.0 column: web scan engine + predictive intel ─────────
+    t4 = Table(show_header=True, header_style="bold green", box=None, padding=(0, 1))
+    t4.add_column("🧠 v5.0  SCAN ENGINE + INTEL", style="green")
+    t4.add_row("[37] 🌐 Full Web Scan")
+    t4.add_row("[38] 🕷  Nikto Web Scan")
+    t4.add_row("[39] 🔎 WhatWeb Fingerprint")
+    t4.add_row("[40] 🔓 Hash Crack (chain)")
+    t4.add_row("[41] 💉 SQLi Detection")
+    t4.add_row("──────────────────────")
+    t4.add_row("[42] 🕰  Time Machine")
+    t4.add_row("[43] 📡 Threat Intel (KEV)")
+    t4.add_row("[44] 🤖 AI System Pentest")
+    t4.add_row("[45] 🟣 Attack Narrative")
+    t4.add_row("[46] 🔮 Attack Prediction")
+    t4.add_row("[47] 🧬 Security DNA")
+    t4.add_row("[48] 👁  Sentinel Mode")
+    t4.add_row("[49] 📜 Compliance Report")
+    t4.add_row("[50] 📈 Posture Forecast")
+    t4.add_row("[51] 🔁 Remediation Verify")
+
+    console.print(Panel(Columns([t1, t2, t3, t4]),
+                        title="[bold white]━━━  N U L L S H A D O W   v5.0  ━━━  [ 45 TOOLS ]  ━━━[/bold white]",
                         border_style="red"))
 
 
@@ -451,6 +469,132 @@ def handle_choice(choice, state):
 
     elif choice == '36':
         findings_menu()
+
+    # ── v5.0: Scan Engine (Phase D) ────────────────────────
+    elif choice in ('37', '38', '39', '40', '41'):
+        from modules.pentesting import scan_engine as se
+        if choice == '40':
+            h = Prompt.ask("Enter hash to crack")
+            res = se.hash_crack(h)
+            console.print(f"[{'green' if res['cracked'] else 'yellow'}]"
+                          f"{res['finding']['title']}[/]")
+            console.print(f"Type: {res['hash_type']} | steps: {', '.join(res['steps_tried'])}"
+                          + (f" | suggestion: {res['suggestion']}" if res.get('suggestion') else ""))
+        else:
+            t = Prompt.ask("Target (host/IP or URL)")
+            scan_id = db.save_scan(t, {"37": "Full Web Scan", "38": "Nikto",
+                                       "39": "WhatWeb", "41": "SQLi Detect"}[choice], {})
+            if choice == '37':
+                findings = se.full_web_scan(t)
+            elif choice == '38':
+                findings = se.nikto_scan(t)
+            elif choice == '39':
+                findings = se.whatweb_scan(t)
+            else:  # 41
+                findings = se.sqli_detect(t if t.startswith("http") else f"http://{t}")
+            n = se.persist_scan_engine_findings(db, scan_id, findings)
+            for f in findings:
+                sev = f["severity"]
+                color = "red" if sev in ("CRITICAL", "HIGH") else "yellow" if sev == "MEDIUM" else "white"
+                console.print(f"  [{color}]{sev:8}[/] {f['title']}")
+            console.print(f"[green]✓ {n} finding(s) saved (scan #{scan_id}).[/green]")
+
+    # ── v5.0: Security Posture Time Machine (Phase B) ──────
+    elif choice == '42':
+        from modules.intel.time_machine import exposure_analysis, render_exposure_table
+        t = Prompt.ask("Target")
+        render_exposure_table(exposure_analysis(db, t), console)
+
+    # ── v5.0: Threat Intel feeds (Phase C) ─────────────────
+    elif choice == '43':
+        from modules.intel.threat_feeds import ThreatIntelChecker, render_threat_report
+        t = Prompt.ask("Target (IP/domain)")
+        findings = db.get_findings(target=t)
+        render_threat_report(ThreatIntelChecker(db).check_target(t, findings), console)
+
+    # ── v5.0: AI System Pentest (Phase E) ──────────────────
+    elif choice == '44':
+        from modules.pentesting.ai_pentest import ai_pentest, render_ai_pentest
+        console.print("[yellow]Only test AI systems you are explicitly authorized to test.[/yellow]")
+        t = Prompt.ask("Target AI endpoint (host or full URL)")
+        scan_id = db.save_scan(t, "AI System Pentest", {})
+        res = ai_pentest(t)
+        render_ai_pentest(res, console)
+        try:
+            from modules.intel.findings_extract import persist_findings
+            persist_findings(db, scan_id, res["findings"])
+        except Exception:
+            pass
+
+    # ── v5.0: Attack Narrative (Phase F) ───────────────────
+    elif choice == '45':
+        from modules.intel.attack_narrative import generate_attack_narrative, render_narrative
+        t = Prompt.ask("Target")
+        findings = db.get_findings(target=t)
+        if not findings:
+            console.print("[yellow]No findings for this target. Run a scan first.[/yellow]")
+        else:
+            render_narrative(generate_attack_narrative(findings, ai_engine=ai, target=t), console)
+
+    # ── v5.0: Attack Prediction (Phase G) ──────────────────
+    elif choice == '46':
+        from modules.intel.attack_prediction import predict_all, render_predictions
+        t = Prompt.ask("Target")
+        render_predictions(predict_all(t, db), console)
+
+    # ── v5.0: Security DNA (Phase H) ───────────────────────
+    elif choice == '47':
+        from modules.intel.security_dna import match_breach_patterns, render_dna
+        t = Prompt.ask("Target")
+        render_dna(match_breach_patterns(db, t), console)
+
+    # ── v5.0: Sentinel Mode (Phase I) ──────────────────────
+    elif choice == '48':
+        from modules.intel.sentinel import SentinelMode, render_status
+        sentinel = SentinelMode(db)
+        action = Prompt.ask("Sentinel: [s]tart / [t]op / stat[u]s", default="u").lower()
+        if action.startswith("s"):
+            tg = Prompt.ask("Targets to watch (comma-separated)")
+            targets = [x.strip() for x in tg.split(",") if x.strip()]
+            topic = Prompt.ask("ntfy.sh topic (blank = auto)", default="").strip() or None
+            info = sentinel.start(targets, ntfy_topic=topic)
+            console.print(f"[green]Sentinel started.[/green] {info.get('subscribe','')}")
+        elif action.startswith("t"):
+            sentinel.stop(); console.print("[yellow]Sentinel stopped.[/yellow]")
+        else:
+            render_status(sentinel.status(), console)
+
+    # ── v5.0: Compliance Report (Phase J) ──────────────────
+    elif choice == '49':
+        from modules.compliance.evidence_generator import generate_report
+        t = Prompt.ask("Target")
+        fw = Prompt.ask("Framework", choices=["ISO27001", "NIST_CSF", "PCI_DSS", "OWASP"],
+                        default="ISO27001")
+        console.print("[cyan]Generating compliance evidence PDF...[/cyan]")
+        path = generate_report(t, fw, db)
+        console.print(f"[green]✓ Compliance report saved: {path}[/green]")
+
+    # ── v5.0: Posture Forecast (Phase L) ───────────────────
+    elif choice == '50':
+        from modules.intel.risk_score import forecast_posture_trend
+        t = Prompt.ask("Target")
+        f = forecast_posture_trend(t, db)
+        if f["status"] == "insufficient_history":
+            console.print(f"[yellow]Insufficient history: {f['runs']} run(s), "
+                          f"need {f['needed']}. Forecast refused (no fabrication).[/yellow]")
+        else:
+            console.print(f"Current: [cyan]{f['current']}/100[/cyan]  →  "
+                          f"projected in {f['days_ahead']}d: [cyan]{f['projected']}/100[/cyan] "
+                          f"(slope {f['slope_per_day']}/day)")
+            if f.get("crosses_60_in_days") is not None:
+                console.print(f"[red]⚠ At current rate, posture falls below 60 in "
+                              f"~{f['crosses_60_in_days']} days.[/red]")
+
+    # ── v5.0: Remediation Verify (Phase K) ─────────────────
+    elif choice == '51':
+        from modules.intel.remediation_tracker import verify_remediation_effectiveness, render_effectiveness
+        t = Prompt.ask("Target")
+        render_effectiveness(verify_remediation_effectiveness(db, t), console)
 
     elif choice.lower() in ['exit', 'quit']:
         console.print("\n[bold red][ NullShadow signing off... ][/bold red]")

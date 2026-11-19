@@ -36,14 +36,28 @@ def extract_findings_from_recon(results, db=None):
             continue
 
         # Open ports → informational findings.
+        # Section 0.5 (findings quality): build a specific title like
+        # "Port 443/tcp nginx 1.18.0" instead of a generic "Open port found",
+        # pulling product/version/service out of the nmap result.
         if _is_phase(phase, "port scan") and data.get("open_ports"):
             for p in data["open_ports"]:
-                svc = p.get("service", "")
-                ver = (p.get("product", "") + " " + p.get("version", "")).strip()
+                svc = p.get("service") or p.get("name") or ""
+                product = p.get("product", "")
+                version = p.get("version", "")
+                proto = p.get("protocol") or p.get("proto") or "tcp"
+                prod_ver = " ".join(x for x in (product, version) if x).strip()
+                # Title carries the concrete tech + version when nmap resolved it.
+                title = f"Port {p.get('port','')}/{proto} {svc}".rstrip()
+                if prod_ver:
+                    title += f" — {prod_ver}"
+                desc = (f"Open {proto} port {p.get('port','')}. "
+                        f"Service: {svc or 'unknown'}"
+                        + (f", detected software: {prod_ver}" if prod_ver else "")
+                        + (f", banner: {p.get('extrainfo')}" if p.get("extrainfo") else ""))
                 findings.append({
                     "target": target, "finding_type": "open_port", "severity": "INFO",
-                    "title": f"Open port {p.get('port','')} ({svc or 'unknown'})",
-                    "description": f"Service: {svc} {ver}".strip(),
+                    "title": title.strip() or f"Open port {p.get('port','')}",
+                    "description": desc.strip(),
                     "cve_ids": [], "raw_data": p,
                 })
 

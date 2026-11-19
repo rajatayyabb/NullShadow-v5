@@ -1,0 +1,75 @@
+# NullShadow v5.0 — core + dashboard + local AI.
+#
+# Startup order (Phase A — verified against the real Odysseus source):
+#   1. docker compose -f docker-compose.v5.yml up -d
+#   2. git clone https://github.com/pewdiepie-archdaemon/odysseus.git nullshadow_ui
+#      cd nullshadow_ui && cp .env.example .env && docker compose up -d --build
+#      # Odysseus host port defaults to 7011 (APP_PORT); the container itself
+#      # listens on 7000 internally. On the host open  http://localhost:7011
+#   3. Create the admin account on first visit (or POST /api/auth/setup), then:
+#      python3 docker/register_nullshadow_mcp.py \
+#          --odysseus-url http://localhost:7011 --username admin --password '<pw>'
+#      # OR, instead of login, set ODYSSEUS_INTERNAL_TOKEN in Odysseus's .env and:
+#      #   python3 docker/register_nullshadow_mcp.py --internal-token "$ODYSSEUS_INTERNAL_TOKEN"
+#      # OR run Odysseus with AUTH_ENABLED=false and pass --no-auth
+#
+# Registration hits the REAL endpoint POST /api/mcp/servers (form-encoded,
+# admin-gated), not /servers. See docker/register_nullshadow_mcp.py.
+#
+# Odysseus is started from nullshadow_ui/ and joins this same bridge network
+# (nullshadow-net) so it can reach ollama + the dashboard by service name.
+
+services:
+  nullshadow-core:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nullshadow:5.0
+    container_name: nullshadow-core
+    # Keeps the venv + mcp_server.py reachable for MCP registration / manual runs.
+    command: ["tail", "-f", "/dev/null"]
+    environment:
+      - LOCAL_AI_URL=http://ollama:11434
+      - PYTHONPATH=/app
+    volumes:
+      - ./:/app
+    working_dir: /app
+    networks: [nullshadow-net]
+    restart: unless-stopped
+
+  nullshadow-dash:
+    image: nullshadow:5.0
+    container_name: nullshadow-dash
+    depends_on: [nullshadow-core]
+    command: ["python3", "dashboard.py"]
+    environment:
+      - NULLSHADOW_DASHBOARD_PORT=8077
+      - PYTHONPATH=/app
+    volumes:
+      - ./:/app
+    working_dir: /app
+    ports:
+      - "127.0.0.1:8077:8077"   # localhost only — read-only reporting layer
+    networks: [nullshadow-net]
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: nullshadow-ollama
+    # Auto-pull a small model on first start, then serve.
+    entrypoint: >
+      /bin/sh -c "ollama serve & sleep 5 && (ollama pull llama3.2:3b || true) && wait"
+    volumes:
+      - ollama-data:/root/.ollama
+    ports:
+      - "127.0.0.1:11434:11434"
+    networks: [nullshadow-net]
+    restart: unless-stopped
+
+networks:
+  nullshadow-net:
+    name: nullshadow-net
+    driver: bridge
+
+volumes:
+  ollama-data:

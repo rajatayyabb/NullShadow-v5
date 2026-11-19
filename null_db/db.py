@@ -71,7 +71,123 @@ class ScanDatabase:
             except sqlite3.OperationalError:
                 pass  # column already exists
 
+        # ── v5.0 additive migrations ───────────────────────────────
+
+        # Phase C: generic threat-intel cache (CISA KEV / OTX / ThreatFox).
+        self.conn.execute('''
+            CREATE TABLE IF NOT EXISTS threat_intel_cache (
+                cache_key TEXT PRIMARY KEY,
+                data      TEXT,
+                cached_at TEXT
+            )
+        ''')
+
+        # Phase I: Sentinel Mode autonomous-CVE-watcher alert log.
+        self.conn.execute('''
+            CREATE TABLE IF NOT EXISTS sentinel_alerts (
+                id               INTEGER PRIMARY KEY AUTOINCREMENT,
+                cve_id           TEXT,
+                target           TEXT,
+                matched_tech     TEXT,
+                severity         TEXT,
+                alert_sent_at    TEXT,
+                notification_sent INTEGER DEFAULT 0
+            )
+        ''')
+
+        # Phase K: remediation-effectiveness learning loop.
+        self.conn.execute('''
+            CREATE TABLE IF NOT EXISTS remediation_stats (
+                category          TEXT PRIMARY KEY,
+                given_count       INTEGER DEFAULT 0,
+                resolved_count    INTEGER DEFAULT 0,
+                effectiveness     REAL DEFAULT 0.0,
+                updated_at        TEXT
+            )
+        ''')
+
+        # Phase K: track which findings were given remediation and when.
+        for col, ddl in (
+            ("remediation_id",       "TEXT"),
+            ("remediation_given_at", "TEXT"),
+        ):
+            try:
+                self.conn.execute(f"ALTER TABLE findings ADD COLUMN {col} {ddl}")
+            except sqlite3.OperationalError:
+                pass  # column already exists
+
         self.conn.commit()
+
+    # ── v5.0: generic threat-intel cache (Phase C) ─────────────
+    def get_threat_cache(self, cache_key, max_age_hours=24):
+        """Return cached threat-intel data for cache_key if fresh, else None."""
+        cur = self.conn.execute(
+            'SELECT data, cached_at FROM threat_intel_cache WHERE cache_key = ?', (cache_key,))
+        row = cur.fetchone()
+        if not row:
+            return None
+        try:
+            from datetime import datetime as _dt
+            age = (_dt.now() - _dt.fromisoformat(row["cached_at"])).total_seconds()
+            if age > max_age_hours * 3600:
+                return None
+            return json.loads(row["data"])
+        except Exception:
+            return None
+
+    def set_threat_cache(self, cache_key, data):
+        try:
+            self.conn.execute(
+                'INSERT OR REPLACE INTO threat_intel_cache (cache_key, data, cached_at) VALUES (?, ?, ?)',
+                (cache_key, json.dumps(data, default=str), datetime.now().isoformat()))
+            self.conn.commit()
+        except Exception as e:
+            console.print(f"[yellow]⚠ Could not write threat cache: {e}[/yellow]")
+
+    # ── v5.0: Sentinel alerts (Phase I) ────────────────────────
+    def add_sentinel_alert(self, cve_id, target, matched_tech, severity="UNKNOWN", notification_sent=False):
+        try:
+            cur = self.conn.execute(
+                'INSERT INTO sentinel_alerts (cve_id, target, matched_tech, severity, alert_sent_at, notification_sent) '
+                'VALUES (?, ?, ?, ?, ?, ?)',
+                (cve_id, target, matched_tech, severity, datetime.now().isoformat(), 1 if notification_sent else 0))
+            self.conn.commit()
+            return cur.lastrowid
+        except Exception as e:
+            console.print(f"[yellow]⚠ Could not save sentinel alert: {e}[/yellow]")
+            return None
+
+    def get_sentinel_alerts(self, limit=50):
+        cur = self.conn.execute(
+            'SELECT * FROM sentinel_alerts ORDER BY id DESC LIMIT ?', (limit,))
+        return [dict(r) for r in cur.fetchall()]
+
+    # ── v5.0: remediation effectiveness (Phase K) ──────────────
+    def get_remediation_stats(self):
+        cur = self.conn.execute('SELECT * FROM remediation_stats ORDER BY category')
+        return [dict(r) for r in cur.fetchall()]
+
+    def upsert_remediation_stat(self, category, given_delta=0, resolved_delta=0):
+        cur = self.conn.execute('SELECT given_count, resolved_count FROM remediation_stats WHERE category = ?', (category,))
+        row = cur.fetchone()
+        given = (row["given_count"] if row else 0) + given_delta
+        resolved = (row["resolved_count"] if row else 0) + resolved_delta
+        eff = round(resolved / given, 3) if given else 0.0
+        self.conn.execute(
+            'INSERT OR REPLACE INTO remediation_stats (category, given_count, resolved_count, effectiveness, updated_at) '
+            'VALUES (?, ?, ?, ?, ?)',
+            (category, given, resolved, eff, datetime.now().isoformat()))
+        self.conn.commit()
+        return eff
+
+    def mark_finding_remediated(self, finding_id, remediation_id):
+        try:
+            self.conn.execute(
+                'UPDATE findings SET remediation_id = ?, remediation_given_at = ? WHERE id = ?',
+                (remediation_id, datetime.now().isoformat(), finding_id))
+            self.conn.commit()
+        except Exception:
+            pass
 
     # ── Scans ──────────────────────────────────────────────────
     def save_scan(self, target, scan_type, results, ai_analysis="", report_path="", threat_score=0):

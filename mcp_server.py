@@ -44,12 +44,14 @@ from modules.pentesting.scanner import AdvancedPentestModules
 from modules.pentesting.new_tools import NewPentestTools
 from modules.intel.rdap_lookup import rdap_lookup
 from modules.intel.nvd_lookup import extract_cve_ids, lookup_cve
+from null_db.db import ScanDatabase
 
 mcp = FastMCP("nullshadow")
 
 _recon = ReconPipeline()
 _pentest = AdvancedPentestModules()
 _newtools = NewPentestTools()
+_db = ScanDatabase()
 
 
 def _enrich_vuln_findings(vulns, target):
@@ -128,6 +130,80 @@ def jwt_analyze(token: str) -> dict:
     """Decode a JWT and report header/payload plus security issues
     (alg=none, weak symmetric alg, expiry). Does not verify the signature."""
     return _pentest.jwt_analyze_json(token)
+
+
+# ── v5.0 tools (Phase A.5) — predictive & defensive intel ──────
+
+@mcp.tool()
+def threat_intel_check(target: str) -> dict:
+    """Check a target's stored findings against CISA KEV (actively-exploited CVEs)
+    plus OTX/ThreatFox reputation. Returns {status, kev_matches, alerts}."""
+    from modules.intel.threat_feeds import ThreatIntelChecker
+    findings = _db.get_findings(target=target)
+    return ThreatIntelChecker(_db).check_target(target, findings)
+
+
+@mcp.tool()
+def exposure_analysis(target: str) -> dict:
+    """Security Posture Time Machine: days each CVE has been exposed on a target,
+    from first-seen scan date + NVD publish date. Returns sorted exposures."""
+    from modules.intel.time_machine import exposure_analysis as _ea
+    return _ea(_db, target)
+
+
+@mcp.tool()
+def generate_attack_narrative(target: str) -> dict:
+    """Purple-team attack-path narrative over a target's stored findings
+    (analysis + one Priority Action; no exploit code or payloads)."""
+    from modules.intel.attack_narrative import generate_attack_narrative as _gan
+    findings = _db.get_findings(target=target)
+    return _gan(findings, ai_engine=None, target=target)
+
+
+@mcp.tool()
+def predict_exploitation(target: str) -> dict:
+    """Cognitive Attack Prediction: probability + days-until-weaponized for each
+    tech-relevant CVE on a target, from NVD->CISA KEV timing patterns."""
+    from modules.intel.attack_prediction import predict_all
+    return predict_all(target, _db)
+
+
+@mcp.tool()
+def dna_analysis(target: str) -> dict:
+    """Security DNA: compare a target's live fingerprint against curated
+    pre-breach patterns (MOVEit, Log4Shell, ProxyLogon, ...). Returns top matches."""
+    from modules.intel.security_dna import match_breach_patterns
+    res = match_breach_patterns(_db, target)
+    return {"target": target, "matches": res["matches"], "dna": res["dna"]}
+
+
+@mcp.tool()
+def compliance_report(target: str, framework: str = "ISO27001") -> dict:
+    """Generate a compliance evidence PDF (ISO27001/NIST_CSF/PCI_DSS/OWASP) from a
+    target's real scan data. Returns the saved report path + control coverage."""
+    from modules.compliance.evidence_generator import generate_report
+    from modules.compliance.compliance_mapper import summarize
+    findings = _db.get_findings(target=target)
+    path = generate_report(target, framework, _db)
+    s = summarize(findings, framework)
+    return {"target": target, "framework": framework.upper(), "report_path": path,
+            "controls_evidenced": s["controls_evidenced"]}
+
+
+@mcp.tool()
+def forecast_posture(target: str) -> dict:
+    """Security-debt forecast: project a target's posture score 30 days ahead via
+    linear regression. Refuses (insufficient_history) with <10 monitoring runs."""
+    from modules.intel.risk_score import forecast_posture_trend
+    return forecast_posture_trend(target, _db)
+
+
+@mcp.tool()
+def sentinel_status() -> dict:
+    """Return Sentinel Mode status (running/stopped, monitored targets) and the
+    most recent autonomous CVE-watch alerts."""
+    from modules.intel.sentinel import SentinelMode
+    return SentinelMode(_db).status()
 
 
 if __name__ == "__main__":

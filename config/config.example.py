@@ -66,3 +66,6 @@ SUBDOMAIN_WORDLIST = [
     "jenkins", "jira", "confluence", "sonar", "grafana", "kibana",
     "elasticsearch", "redis", "mysql", "postgres", "mongo", "backup",
 ]
+
+# ─── v5.0: organization name for compliance evidence reports (Phase J) ─
+ORG_NAME = os.getenv("NULLSHADOW_ORG", "Your Organization")

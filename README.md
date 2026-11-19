@@ -11,11 +11,11 @@
 
 ### AI-Powered Autonomous Security Platform
 
-[![Version](https://img.shields.io/badge/version-4.0-red.svg?style=for-the-badge)](https://github.com/rajatayyabb/NullShadow-v3-DL-RL)
+[![Version](https://img.shields.io/badge/version-5.0-red.svg?style=for-the-badge)](https://github.com/rajatayyabb/NullShadow-v4)
 [![License](https://img.shields.io/badge/license-MIT-green.svg?style=for-the-badge)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg?style=for-the-badge)](https://www.python.org/)
 [![Platform](https://img.shields.io/badge/platform-Kali%20Linux%20%7C%20Ubuntu-black.svg?style=for-the-badge)](https://www.kali.org/)
-[![Stars](https://img.shields.io/github/stars/rajatayyabb/NullShadow-v3-DL-RL?style=for-the-badge&color=yellow)](https://github.com/rajatayyabb/NullShadow-v3-DL-RL/stargazers)
+[![Stars](https://img.shields.io/github/stars/rajatayyabb/NullShadow-v4?style=for-the-badge&color=yellow)](https://github.com/rajatayyabb/NullShadow-v4/stargazers)
 
 **Free. Self-Hosted. No Data Leaves Your Network.**
 
@@ -40,7 +40,7 @@ It does two things most security tools don’t:
 
 -----
 
-## ✨ What’s New in v4.0
+## ✨ What’s New in v5.0
 
 |Feature                             |Description                                                                       |
 |------------------------------------|----------------------------------------------------------------------------------|
@@ -146,8 +146,8 @@ ollama pull llama3.2:3b
 ### Quick Setup
 
 ```bash
-git clone https://github.com/rajatayyabb/NullShadow-v3-DL-RL.git
-cd NullShadow-v3-DL-RL
+git clone https://github.com/rajatayyabb/NullShadow-v4.git
+cd NullShadow-v4
 
 # Create virtual environment (required on Kali 2025.x)
 python3 -m venv venv
@@ -178,7 +178,7 @@ python3 mcp_server.py
   "mcpServers": {
     "nullshadow": {
       "command": "python3",
-      "args": ["/path/to/NullShadow-v3-DL-RL/mcp_server.py"]
+      "args": ["/path/to/NullShadow-v4/mcp_server.py"]
     }
   }
 }
@@ -204,7 +204,7 @@ nano config/config.py
 ## 🏗️ Architecture
 
 ```
-NullShadow v4.0
+NullShadow v5.0
 ├── main.py                          ← CLI entry point (37 tools)
 ├── mcp_server.py                    ← MCP server (10 tools for AI agents)
 ├── dashboard.py                     ← Flask web dashboard
@@ -255,7 +255,7 @@ ai_pentest(target_url)      → AI system vulnerability testing (v5.0)
 
 ## 🗺️ Roadmap
 
-### v4.0 — Current (Production Ready) ✅
+### v5.0 — Current (Production Ready) ✅
 
 - 37-tool CLI, structured findings DB, NVD CVE enrichment
 - CVSS-weighted risk scoring, scan diff engine
@@ -264,7 +264,7 @@ ai_pentest(target_url)      → AI system vulnerability testing (v5.0)
 - MCP server with 10 exposed tools
 - Local AI via Ollama (zero cost)
 
-### v5.0 — In Development 🔧
+### v6.0 — In Development 🔧
 
 - **Odysseus Integration** — Natural language interface. Type “scan this domain” → AI agent calls tools autonomously
 - **Security Posture Time Machine** — Days exposed per CVE visualization

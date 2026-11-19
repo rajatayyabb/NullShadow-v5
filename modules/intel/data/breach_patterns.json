@@ -1,0 +1,89 @@
+{
+  "_comment": "Curated, anonymized pre-breach fingerprints derived from PUBLIC breach disclosures (Phase H, Security DNA). Each entry describes security indicators that were present BEFORE a well-documented breach campaign. Reference/analytical use only. Weights are relative importance of each matching factor.",
+  "patterns": [
+    {
+      "id": "moveit-2023-cl0p",
+      "name": "MOVEit Transfer mass-exploitation (Cl0p, 2023)",
+      "year": 2023,
+      "summary": "Internet-exposed managed file transfer app with a SQL injection zero-day (CVE-2023-34362) exploited for mass data theft.",
+      "indicators": {
+        "tech": ["moveit", "file transfer", "mft", "progress", "iis", "asp.net"],
+        "ports": [443, 80, 8080],
+        "missing_headers": ["Content-Security-Policy", "X-Frame-Options"],
+        "cve_types": ["sql injection", "file transfer", "rce"],
+        "ssl_weak": false
+      },
+      "weights": {"tech": 0.4, "ports": 0.15, "missing_headers": 0.15, "cve_types": 0.3}
+    },
+    {
+      "id": "log4shell-2021",
+      "name": "Log4Shell opportunistic exploitation (2021-2022)",
+      "year": 2021,
+      "summary": "Java web apps logging untrusted input via Log4j2 (CVE-2021-44228) allowed JNDI-based RCE at massive scale.",
+      "indicators": {
+        "tech": ["java", "tomcat", "struts", "log4j", "spring", "elasticsearch", "vmware"],
+        "ports": [8080, 443, 8443, 9200],
+        "missing_headers": ["Content-Security-Policy"],
+        "cve_types": ["rce", "deserialization", "injection"],
+        "ssl_weak": false
+      },
+      "weights": {"tech": 0.4, "ports": 0.15, "missing_headers": 0.1, "cve_types": 0.35}
+    },
+    {
+      "id": "proxylogon-2021",
+      "name": "Exchange ProxyLogon chain (HAFNIUM, 2021)",
+      "year": 2021,
+      "summary": "On-prem Microsoft Exchange servers exposed to the internet, chained SSRF + write (CVE-2021-26855 et al) for webshells.",
+      "indicators": {
+        "tech": ["exchange", "owa", "iis", "microsoft", "outlook web"],
+        "ports": [443, 80, 25, 587],
+        "missing_headers": ["X-Frame-Options", "Strict-Transport-Security"],
+        "cve_types": ["ssrf", "rce", "authentication bypass"],
+        "ssl_weak": true
+      },
+      "weights": {"tech": 0.4, "ports": 0.2, "missing_headers": 0.1, "cve_types": 0.3}
+    },
+    {
+      "id": "solarwinds-2020",
+      "name": "SolarWinds Orion supply-chain (2020)",
+      "year": 2020,
+      "summary": "Network-management platform with internet-exposed web console and privileged reach across the estate.",
+      "indicators": {
+        "tech": ["solarwinds", "orion", "iis", "asp.net", ".net"],
+        "ports": [443, 17777, 17778],
+        "missing_headers": ["Content-Security-Policy", "X-Frame-Options"],
+        "cve_types": ["authentication bypass", "rce"],
+        "ssl_weak": false
+      },
+      "weights": {"tech": 0.45, "ports": 0.2, "missing_headers": 0.1, "cve_types": 0.25}
+    },
+    {
+      "id": "citrix-bleed-2023",
+      "name": "Citrix Bleed NetScaler (CVE-2023-4966, 2023)",
+      "year": 2023,
+      "summary": "Internet-facing NetScaler ADC/Gateway leaking session tokens, used for session hijacking and ransomware staging.",
+      "indicators": {
+        "tech": ["citrix", "netscaler", "adc", "gateway"],
+        "ports": [443, 80],
+        "missing_headers": ["Strict-Transport-Security"],
+        "cve_types": ["information disclosure", "session hijack", "authentication bypass"],
+        "ssl_weak": false
+      },
+      "weights": {"tech": 0.45, "ports": 0.15, "missing_headers": 0.1, "cve_types": 0.3}
+    },
+    {
+      "id": "legacy-tls-webapp",
+      "name": "Legacy web application with weak crypto (generic high-risk profile)",
+      "year": 2022,
+      "summary": "Outdated web stack with deprecated TLS, missing security headers and old CMS versions — the common pre-breach baseline for opportunistic attacks.",
+      "indicators": {
+        "tech": ["wordpress", "php", "apache", "joomla", "phpmyadmin", "jquery"],
+        "ports": [80, 443, 21, 3306],
+        "missing_headers": ["Content-Security-Policy", "X-Frame-Options", "Strict-Transport-Security", "X-Content-Type-Options"],
+        "cve_types": ["xss", "sql injection", "rce", "file upload"],
+        "ssl_weak": true
+      },
+      "weights": {"tech": 0.3, "ports": 0.2, "missing_headers": 0.25, "cve_types": 0.25}
+    }
+  ]
+}

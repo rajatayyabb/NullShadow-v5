@@ -52,3 +52,10 @@ flask>=2.3.0
 # clients (Claude Desktop, etc.). Optional: only needed to run mcp_server.py.
 mcp>=1.2.0
 
+
+# ── v5.0 additions ────────────────────────────────────────────
+# No NEW hard dependencies: the v5 modules reuse requests (threat feeds,
+# ntfy.sh, AI-endpoint probing), flask (dashboard routes) and reportlab
+# (compliance PDFs), all already listed above. Dashboard charts load via CDN
+# (Chart.js, vis-network) — no pip install. Sentinel push uses ntfy.sh over
+# plain HTTP (requests). markupsafe ships with flask (used by dashboard escaping).
